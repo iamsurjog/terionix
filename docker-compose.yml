@@ -24,5 +24,15 @@ services:
       - backend
     restart: unless-stopped
 
+  admin:
+    build:
+      context: ./admin/admin
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   backend-db:
