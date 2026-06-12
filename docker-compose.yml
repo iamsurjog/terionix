@@ -1,0 +1,28 @@
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - DJANGO_DEBUG=False
+      - FRONTEND_URLS=http://localhost:3000
+      - SESSION_COOKIE_SECURE=False
+    volumes:
+      - backend-db:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend-db:
