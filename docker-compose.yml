@@ -11,7 +11,7 @@ services:
       - FRONTEND_URLS=http://localhost:3000
       - SESSION_COOKIE_SECURE=False
     volumes:
-      - backend-db:/app
+      - backend-db:/app/data
     restart: unless-stopped
 
   frontend:
