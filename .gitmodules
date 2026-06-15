@@ -4,3 +4,6 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/iamsurjog/terionix_backend
+[submodule "admin"]
+	path = admin
+	url = https://github.com/iamsurjog/terionix_admin
