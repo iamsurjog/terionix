@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+    env_file: ./backend/.env
     ports:
       - "8001:8001"
     environment:
@@ -13,8 +14,6 @@ services:
       # SMTP — set these for email sending
       - EMAIL_HOST=smtp.gmail.com
       - EMAIL_PORT=587
-      - EMAIL_HOST_USER=
-      - EMAIL_HOST_PASSWORD=
       - EMAIL_USE_TLS=True
       - DEFAULT_FROM_EMAIL=noreply@terionix.com
     volumes:
