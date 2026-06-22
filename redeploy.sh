@@ -2,33 +2,51 @@
 set -euo pipefail
 
 echo "=== 🛑 Stopping existing servers ==="
-# Using '|| true' ensures the script keeps moving forward even if no processes were currently running
 killall node || true
 killall python || true
 killall python3 || true
+killall lt || true # Clear out older localtunnel allocations too
 
-# Give the ports 2 seconds to completely clear out of memory namespaces
 sleep 2
 
 echo "=== 🚀 Starting Deploy Pipeline ==="
 cd ~/Terionix
 
-# 1. Start Frontend in the background, save logs to frontend.log
+# 1. Launch services in background subshells
 echo "-> Launching Frontend..."
 sh frontend/run.sh > frontend.log 2>&1 &
 
-# 2. Concurrently start Admin in the background, save logs to admin.log
 echo "-> Launching Admin Panel..."
 sh admin/run.sh > admin.log 2>&1 &
 
-# 3. Wait 5 seconds to let node/npm compilation clear its initial heavy CPU spike 
-# before starting the Python backend. This prevents phone memory choking.
 sleep 5
 
-# 4. Start Backend in the background, save logs to backend.log
 echo "-> Launching Django Backend..."
 sh backend/run.sh > backend.log 2>&1 &
 
-echo "=== 🎉 Deployment script finished successfully! ==="
-echo "All processes are spinning in the background."
-echo "Use 'tail -f backend.log' or 'htop' to monitor them."
+# ==========================================
+# NEW: Localtunnel Exposure Layer
+# ==========================================
+echo "-> Cooling down for 5 seconds before tunnel handshake..."
+sleep 5
+
+echo "=== 🌐 Initializing Public Tunnels ==="
+
+# Launch tunnels in the background but direct their startup info into dedicated logs
+lt -p 3000 -s terionix-frontend > frontend-tunnel.log 2>&1 &
+lt -p 3001 -s terionix-admin > admin-tunnel.log 2>&1 &
+
+# Give localtunnel 3 seconds to complete the network handshake
+sleep 3
+
+echo ""
+echo "=================================================="
+echo "🎯 DEPLOYMENT COMPLETE — TUNNEL LINKS:"
+echo "=================================================="
+echo "Frontend Tunnel Output:"
+cat frontend-tunnel.log
+echo "--------------------------------------------------"
+echo "Admin Tunnel Output:"
+cat admin-tunnel.log
+echo "=================================================="
+echo "Tip: Run 'tail -f backend.log' to monitor runtime traffic."
