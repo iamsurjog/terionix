@@ -9,6 +9,18 @@ killall lt || true # Clear out older localtunnel allocations too
 
 sleep 2
 
+# Navigate to the project root directory where this script lives
+cd "$(dirname "$0")"
+
+echo "=== 🔄 Syncing Codebases from GitHub ==="
+echo "-> Pulling main repository updates..."
+git fetch origin
+git reset --hard origin/main
+
+echo "-> Updating and syncing all submodules..."
+# This initializes missing submodules, fetches their commits, and matches the recorded hashes
+git submodule update --init --recursive --remote
+
 echo "=== 🚀 Starting Deploy Pipeline ==="
 cd ~/Terionix
 
