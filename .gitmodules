@@ -7,3 +7,6 @@
 [submodule "admin"]
 	path = admin
 	url = https://github.com/iamsurjog/terionix_admin
+[submodule "terionix_scraper"]
+	path = terionix_scraper
+	url = https://github.com/iamsurjog/terionix_scraper
