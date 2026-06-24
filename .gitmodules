@@ -8,5 +8,5 @@
 	path = admin
 	url = https://github.com/iamsurjog/terionix_admin
 [submodule "terionix_scraper"]
-	path = terionix_scraper
+	path = scraper
 	url = https://github.com/iamsurjog/terionix_scraper
