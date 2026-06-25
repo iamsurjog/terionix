@@ -1,3 +1,5 @@
 /.omo
 .env
 *.log
+scraper/data/
+**/__pycache__/

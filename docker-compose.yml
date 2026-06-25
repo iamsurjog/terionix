@@ -41,6 +41,7 @@ services:
       dockerfile: Dockerfile
       args:
         API_PROXY_TARGET: http://backend:8001
+        SCRAPER_API_TARGET: http://scraper-api:8002
     ports:
       - "3001:3001"
     environment:
@@ -48,7 +49,19 @@ services:
       - API_URL=http://backend:8001/api
     depends_on:
       - backend
+      - scraper-api
+    restart: unless-stopped
+
+  scraper-api:
+    build:
+      context: ./scraper
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    volumes:
+      - scraper-db:/app/data
     restart: unless-stopped
 
 volumes:
   backend-db:
+  scraper-db:
