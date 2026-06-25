@@ -7,8 +7,9 @@
 #    2. Creates a Python virtualenv & installs backend dependencies
 #    3. Runs Django migrations + seeds demo content
 #    4. Installs frontend & admin npm dependencies
-#    5. Makes all run.sh scripts executable
-#    6. Prints the exact commands to start each service
+#    5. Installs scraper dependencies (Python virtualenv + Playwright)
+#    6. Makes all run.sh scripts executable
+#    7. Prints the exact commands to start each service
 # ═══════════════════════════════════════════════════════════════════════
 
 set -euo pipefail
@@ -118,15 +119,51 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════
-#  6.  Make run scripts executable
+#  6.  Scraper dependencies
+# ═══════════════════════════════════════════════════════════════════
+
+echo ""
+echo "───  Scraper (Python FastAPI) ─────────────────────"
+
+cd "$ROOT/scraper"
+
+if [ -d .venv ]; then
+    echo "✔  Virtualenv already exists at scraper/.venv"
+else
+    echo "   Creating Python virtualenv …"
+    python3 -m venv .venv
+    echo "✔  Virtualenv created"
+fi
+
+echo "   Installing Python dependencies …"
+source .venv/bin/activate
+pip install -q -r requirements-fastapi.txt
+
+echo "   Installing Playwright Chromium browser …"
+python -m playwright install chromium
+echo "✔  Playwright Chromium installed"
+
+# Create .env from .env.example if not exists
+if [ -f .env ]; then
+    echo "✔  scraper/.env already exists — keeping it"
+else
+    cp .env.example .env
+    echo "✔  scraper/.env created from .env.example"
+fi
+
+cd "$ROOT"
+
+# ═══════════════════════════════════════════════════════════════════
+#  7.  Make run scripts executable
 # ═══════════════════════════════════════════════════════════════════
 
 chmod +x "$ROOT/backend/run.sh" \
        "$ROOT/frontend/run.sh" \
-       "$ROOT/admin/run.sh"
+       "$ROOT/admin/run.sh" \
+       "$ROOT/scraper/run.sh"
 
 # ═══════════════════════════════════════════════════════════════════
-#  7.  Done — print instructions
+#  8.  Done — print instructions
 # ═══════════════════════════════════════════════════════════════════
 
 cd "$ROOT"
@@ -136,7 +173,7 @@ echo "  ╔═══════════════════════
 echo "  ║   ✅  Setup complete!                           ║"
 echo "  ╚══════════════════════════════════════════════════╝"
 echo ""
-echo "  Open THREE separate terminals and run:"
+echo "  Open FOUR separate terminals and run:"
 echo ""
 echo "  ────────────────────────────────────────────────────"
 echo "  #1 — Backend (Django API on http://localhost:8001)"
@@ -156,6 +193,12 @@ echo "  ────────────────────────
 echo "  cd $ROOT/admin"
 echo "  ./run.sh"
 echo ""
+echo "  ────────────────────────────────────────────────────"
+echo "  #4 — Scraper API (FastAPI on http://localhost:8002)"
+echo "  ────────────────────────────────────────────────────"
+echo "  cd $ROOT/scraper"
+echo "  ./run.sh"
+echo ""
 echo "  Or if you prefer running the commands directly:"
 echo ""
 echo "  (1) Backend:"
@@ -166,6 +209,9 @@ echo "      cd $ROOT/frontend && npm run dev"
 echo ""
 echo "  (3) Admin:"
 echo "      cd $ROOT/admin && npm run dev"
+echo ""
+echo "  (4) Scraper:"
+echo "      cd $ROOT/scraper && source .venv/bin/activate && ./run.sh"
 echo ""
 echo "  ────────────────────────────────────────────────────"
 echo "  Tip: Ctrl+C each server to stop it."

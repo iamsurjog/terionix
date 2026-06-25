@@ -31,6 +31,9 @@ sh frontend/run.sh > frontend.log 2>&1 &
 echo "-> Launching Admin Panel..."
 sh admin/run.sh > admin.log 2>&1 &
 
+echo "-> Launching Scraper API..."
+sh scraper/run.sh > scraper.log 2>&1 &
+
 sleep 5
 
 echo "-> Launching Django Backend..."
