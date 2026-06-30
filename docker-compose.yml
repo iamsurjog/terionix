@@ -27,6 +27,7 @@ services:
       dockerfile: Dockerfile
       args:
         API_PROXY_TARGET: http://backend:8001
+        API_URL: http://backend:8001/api
     ports:
       - "3000:3000"
     environment:
@@ -42,6 +43,7 @@ services:
       dockerfile: Dockerfile
       args:
         API_PROXY_TARGET: http://backend:8001
+        API_URL: http://backend:8001/api
         SCRAPER_API_TARGET: http://scraper-api:8002
     ports:
       - "3001:3001"
